@@ -47,29 +47,21 @@ RUN git clone https://github.com/novnc/noVNC.git /opt/novnc \
     && git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify \
     && ln -s /opt/novnc/vnc.html /opt/novnc/index.html
 
-# Set platform for ARM64 compatibility
-ARG TARGETPLATFORM=linux/amd64
-
 # Set up working directory
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy project files
+COPY . .
 
-# Install Playwright and browsers with system dependencies
+# Install Python dependencies
+RUN pip install -e ".[dev]"
+
+# Install Playwright and browsers
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN playwright install --with-deps chromium
-RUN playwright install-deps
-
-# Copy the application code
-COPY . .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV BROWSER_USE_LOGGING_LEVEL=info
-ENV CHROME_PATH=/ms-playwright/chromium-*/chrome-linux/chrome
-ENV ANONYMIZED_TELEMETRY=false
 ENV DISPLAY=:99
 ENV RESOLUTION=1920x1080x24
 ENV VNC_PASSWORD=vncpassword
@@ -77,10 +69,11 @@ ENV CHROME_PERSISTENT_SESSION=true
 ENV RESOLUTION_WIDTH=1920
 ENV RESOLUTION_HEIGHT=1080
 
-# Set up supervisor configuration
-RUN mkdir -p /var/log/supervisor
+# Copy supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Expose ports
 EXPOSE 7788 6080 5901
 
+# Start services using supervisord
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

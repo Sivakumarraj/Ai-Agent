@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "browser-use-webui"
+version = "0.1.0"
+description = "Control your browser with AI assistance"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "Browser Use Team" }
+]
+dependencies = [
+    "browser-use==0.1.37",
+    "pyperclip==1.9.0",
+    "gradio==5.10.0",
+    "json-repair",
+    "langchain-mistralai==0.2.4",
+    "python-dotenv",
+    "langchain-openai",
+    "langchain-anthropic",
+    "langchain-google-genai",
+    "langchain-ollama"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort",
+    "mypy",
+    "flake8"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/browser_use_webui"]
