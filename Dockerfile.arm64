@@ -64,6 +64,9 @@ RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pip install playwright && \
 # Copy the application code
 COPY . .
 
+# Install the local package in editable mode
+RUN pip install -e .
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV BROWSER_USE_LOGGING_LEVEL=info
